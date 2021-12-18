@@ -26,7 +26,7 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
     private BufferedImage canvas;
     private Graphics2D graphics2D;
     private ETools activeTool;
-
+    private TextDialog textDialog;
 
     public static boolean isInCanvas = false;
 
@@ -44,6 +44,7 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
         activeTool = ETools.PENCIL;
         currentColor = Color.BLACK;
         lastColor = Color.WHITE;
+        textDialog = new TextDialog(StartUp.mainWindow);
 
         this.shapes = new Stack<Shape>();
         this.removed = new Stack<Shape>();
@@ -67,6 +68,8 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
         System.out.println("create");
         currentColor = Color.BLACK;
         lastColor = Color.WHITE;
+        textDialog = new TextDialog(StartUp.mainWindow);
+
         this.shapes = new Stack<Shape>();
         this.removed = new Stack<Shape>();
         this.grouped = 1;
@@ -202,23 +205,23 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
     }
 
     public void floodFill(Point2D.Double point, Color fillColor) {
-        Color targetColor = new Color(canvas.getRGB((int) point.getX(), (int) point.getY()));
-        Queue<Point2D.Double> queue = new LinkedList<Point2D.Double>();
-        queue.add(point);
-        if (!targetColor.equals(fillColor)) ;
-        while (!queue.isEmpty()) {
-            Point2D.Double p = queue.remove();
-
-            if ((int) p.getX() >= 0 && (int) p.getX() < canvas.getWidth() &&
-                    (int) p.getY() >= 0 && (int) p.getY() < canvas.getHeight())
-                if (canvas.getRGB((int) p.getX(), (int) p.getY()) == targetColor.getRGB()) {
-                    canvas.setRGB((int) p.getX(), (int) p.getY(), fillColor.getRGB());
-                    queue.add(new Point2D.Double(p.getX() - 1, p.getY()));
-                    queue.add(new Point2D.Double(p.getX() + 1, p.getY()));
-                    queue.add(new Point2D.Double(p.getX(), p.getY() - 1));
-                    queue.add(new Point2D.Double(p.getX(), p.getY() + 1));
-                }
-        }
+//        Color targetColor = new Color(canvas.getRGB((int) point.getX(), (int) point.getY()));
+//        Queue<Point2D.Double> queue = new LinkedList<Point2D.Double>();
+//        queue.add(point);
+//        if (!targetColor.equals(fillColor)) ;
+//        while (!queue.isEmpty()) {
+//            Point2D.Double p = queue.remove();
+//
+//            if ((int) p.getX() >= 0 && (int) p.getX() < canvas.getWidth() &&
+//                    (int) p.getY() >= 0 && (int) p.getY() < canvas.getHeight())
+//                if (canvas.getRGB((int) p.getX(), (int) p.getY()) == targetColor.getRGB()) {
+//                    canvas.setRGB((int) p.getX(), (int) p.getY(), fillColor.getRGB());
+//                    queue.add(new Point2D.Double(p.getX() - 1, p.getY()));
+//                    queue.add(new Point2D.Double(p.getX() + 1, p.getY()));
+//                    queue.add(new Point2D.Double(p.getX(), p.getY() - 1));
+//                    queue.add(new Point2D.Double(p.getX(), p.getY() + 1));
+//                }
+//        }
     }
 
     public void quash() {
@@ -276,6 +279,19 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
             shapes.push(preview.pop());
             preview.clear();
         }
+        else if (activeTool == ETools.TEXT){
+            int result = textDialog.showCustomDialog(StartUp.mainWindow);
+            if (result == TextDialog.APPLY_OPTION) {
+                shapes.push(new Shape(x1, y1, textDialog.getInputSize(), textDialog.getFont(),
+                        currentColor, stroke, ETools.TEXT, textDialog.getText()));
+            }
+
+
+        }
+        else if (activeTool == ETools.BUCKET) {
+            floodFill(new Point2D.Double(x1, y1), currentColor);
+        }
+        dragged = false;
         repaint();
     }
 
