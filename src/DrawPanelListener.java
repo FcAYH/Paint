@@ -117,7 +117,7 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
                     g2.setColor(s.getFillColor());
                     g2.fillRect(s.getX1(), s.getY1(), s.getX2(), s.getY2());
                 }
-            } else if (s.getShape() == ETools.ROUND) {
+            } else if (s.getShape() == ETools.ELLIPTICAL) {
                 g2.drawOval(s.getX1(), s.getY1(), s.getX2(), s.getY2());
                 if (s.transparent == false) {
                     g2.setColor(s.getFillColor());
@@ -126,6 +126,8 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
             } else if (s.getShape() == ETools.TEXT) {
                 g2.setFont(s.getFont());
                 g2.drawString(s.getMessage(), s.getX1(), s.getY1());
+            } else if (s.getShape() == ETools.PENTAGON) {
+
             }
         }
         if (preview.size() > 0) {
@@ -142,7 +144,7 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
                     g2.setColor(s.getFillColor());
                     g2.fillRect(s.getX1(), s.getY1(), s.getX2(), s.getY2());
                 }
-            } else if (s.getShape() == ETools.ROUND) {
+            } else if (s.getShape() == ETools.ELLIPTICAL) {
                 g2.drawOval(s.getX1(), s.getY1(), s.getX2(), s.getY2());
                 if (s.transparent == false) {
                     g2.setColor(s.getFillColor());
@@ -291,6 +293,7 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
         else if (activeTool == ETools.BUCKET) {
             floodFill(new Point2D.Double(x1, y1), currentColor);
         }
+        grouped++;
         dragged = false;
         repaint();
     }
@@ -308,6 +311,7 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
 
     @Override
     public void mouseDragged(MouseEvent e) {
+        System.out.println(grouped);
         StartUp.mainWindow.setMousePosLabel(e.getX(), e.getY());
 
         Color primary = currentColor;
@@ -344,15 +348,15 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
                 preview.push(new Shape(x2, y2, x1 - x2, y1 - y2, primary, stroke, ETools.RECTANGLE, secondary, transparent));
             }
             StartUp.mainWindow.getDrawPanel().repaint();
-        } else if (activeTool == ETools.ROUND) {
+        } else if (activeTool == ETools.ELLIPTICAL) {
             if (x1 < x2 && y1 < y2) {
-                preview.push(new Shape(x1, y1, x2 - x1, y2 - y1, primary, stroke, ETools.ROUND, secondary, transparent));
+                preview.push(new Shape(x1, y1, x2 - x1, y2 - y1, primary, stroke, ETools.ELLIPTICAL, secondary, transparent));
             } else if (x2 < x1 && y1 < y2) {
-                preview.push(new Shape(x2, y1, x1 - x2, y2 - y1, primary, stroke, ETools.ROUND, secondary, transparent));
+                preview.push(new Shape(x2, y1, x1 - x2, y2 - y1, primary, stroke, ETools.ELLIPTICAL, secondary, transparent));
             } else if (x1 < x2 && y2 < y1) {
-                preview.push(new Shape(x1, y2, x2 - x1, y1 - y2, primary, stroke, ETools.ROUND, secondary, transparent));
+                preview.push(new Shape(x1, y2, x2 - x1, y1 - y2, primary, stroke, ETools.ELLIPTICAL, secondary, transparent));
             } else if (x2 < x1 && y2 < y1) {
-                preview.push(new Shape(x2, y2, x1 - x2, y1 - y2, primary, stroke, ETools.ROUND, secondary, transparent));
+                preview.push(new Shape(x2, y2, x1 - x2, y1 - y2, primary, stroke, ETools.ELLIPTICAL, secondary, transparent));
             }
             StartUp.mainWindow.getDrawPanel().repaint();
         }

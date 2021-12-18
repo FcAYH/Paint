@@ -21,7 +21,7 @@ public class PaintMainWindow extends JFrame implements ActionListener {
     private JButton brushesBtn;
     private JButton lineBtn;
     private JButton triangleBtn;
-    private JButton roundBtn;
+    private JButton arcBtn;
     private JButton ellipticalBtn;
     private JButton pentagonBtn;
     private JButton hexagonBtn;
@@ -150,7 +150,7 @@ public class PaintMainWindow extends JFrame implements ActionListener {
         magnifyingBtn.setIcon(new ImageIcon("assets/magnifying (Icon).png"));
         brushesBtn.setIcon(new ImageIcon("assets/paint (Icon).png"));
         lineBtn.setIcon(new ImageIcon("assets/line (Icon).png"));
-        roundBtn.setIcon(new ImageIcon("assets/round (Icon).png"));
+        arcBtn.setIcon(new ImageIcon("assets/arc (Icon).png"));
         ellipticalBtn.setIcon(new ImageIcon("assets/elliptical (Icon).png"));
         hexagonBtn.setIcon((new ImageIcon("assets/hexagon (Icon).png")));
         pentagonBtn.setIcon(new ImageIcon("assets/pentagon (Icon).png"));
@@ -169,7 +169,7 @@ public class PaintMainWindow extends JFrame implements ActionListener {
         magnifyingBtn.addActionListener(this);
         brushesBtn.addActionListener(this);
         lineBtn.addActionListener(this);
-        roundBtn.addActionListener(this);
+        arcBtn.addActionListener(this);
         ellipticalBtn.addActionListener(this);
         hexagonBtn.addActionListener(this);
         pentagonBtn.addActionListener(this);
@@ -337,7 +337,7 @@ public class PaintMainWindow extends JFrame implements ActionListener {
             ((DrawPanelListener) drawPanel).setTool(ETools.PENCIL);
         } else if (e.getSource() == lineBtn) {
             ((DrawPanelListener) drawPanel).setTool(ETools.LINE);
-        } else if (e.getSource() == roundBtn) {
+        } else if (e.getSource() == arcBtn) {
             ((DrawPanelListener) drawPanel).setTool(ETools.ROUND);
         } else if (e.getSource() == ellipticalBtn) {
             ((DrawPanelListener) drawPanel).setTool(ETools.ELLIPTICAL);

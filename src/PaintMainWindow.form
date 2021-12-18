@@ -183,7 +183,7 @@
                   <toolTipText value="三角形"/>
                 </properties>
               </component>
-              <component id="ff276" class="javax.swing.JButton" binding="roundBtn">
+              <component id="ff276" class="javax.swing.JButton" binding="arcBtn">
                 <constraints>
                   <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="30" height="30"/>
@@ -193,7 +193,7 @@
                 <properties>
                   <background color="-394759"/>
                   <text value=""/>
-                  <toolTipText value="圆"/>
+                  <toolTipText value="圆弧"/>
                 </properties>
               </component>
               <component id="9a040" class="javax.swing.JButton" binding="ellipticalBtn">
