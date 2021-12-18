@@ -67,7 +67,7 @@ public class PaintMainWindow extends JFrame implements ActionListener {
 
     public PaintMainWindow() {
         super("画图");
-        System.out.println("second");
+        //System.out.println("second");
         setIconImage(new ImageIcon("assets/Logo.png").getImage());
         setSize(1200, 800);
         setLocation(500, 400);
@@ -318,9 +318,7 @@ public class PaintMainWindow extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == newFile) {
-            System.out.println("dsd");
-        } else if (e.getSource() == paletteBtn) {
+        if (e.getSource() == paletteBtn) {
             showColorChooser();
         } else if (e.getSource() == pencilBtn) {
             ((DrawPanelListener) drawPanel).setTool(ETools.PENCIL);
@@ -338,7 +336,7 @@ public class PaintMainWindow extends JFrame implements ActionListener {
         } else if (e.getSource() == lineBtn) {
             ((DrawPanelListener) drawPanel).setTool(ETools.LINE);
         } else if (e.getSource() == arcBtn) {
-            ((DrawPanelListener) drawPanel).setTool(ETools.ROUND);
+            ((DrawPanelListener) drawPanel).setTool(ETools.ARC);
         } else if (e.getSource() == ellipticalBtn) {
             ((DrawPanelListener) drawPanel).setTool(ETools.ELLIPTICAL);
         } else if (e.getSource() == hexagonBtn) {

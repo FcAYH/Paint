@@ -5,8 +5,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Stack;
 
 public class DrawPanelListener extends JPanel implements MouseListener, MouseMotionListener {
@@ -27,6 +25,13 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
     private Graphics2D graphics2D;
     private ETools activeTool;
     private TextDialog textDialog;
+
+    private ArcStatus drawStatus = ArcStatus.NOT_DRAWING;
+    private ArcStatus direction = ArcStatus.NO_DIRECTION;
+    private Dimension center, startPoint;
+    private int radius;
+    private Vector3 benchmark;
+    private Rectangle rectangle;
 
     public static boolean isInCanvas = false;
 
@@ -65,7 +70,7 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
         addMouseMotionListener(this);
         requestFocus();
         activeTool = ETools.PENCIL;
-        System.out.println("create");
+        //System.out.println("create");
         currentColor = Color.BLACK;
         lastColor = Color.WHITE;
         textDialog = new TextDialog(StartUp.mainWindow);
@@ -92,7 +97,7 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
     }
 
     public void paintComponent(Graphics g) {
-        System.out.println(activeTool.toString() + "pc");
+        //System.out.println(activeTool.toString() + "pc");
         Dimension dimension = StartUp.mainWindow.getDrawPanel().getSize();
         if (canvas == null) {
             canvas = new BufferedImage(dimension.width, dimension.height, BufferedImage.TYPE_INT_ARGB);
@@ -111,7 +116,6 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
             if (s.getShape() == ETools.LINE) {
                 g2.drawLine(s.getX1(), s.getY1(), s.getX2(), s.getY2());
             } else if (s.getShape() == ETools.RECTANGLE) {
-
                 g2.drawRect(s.getX1(), s.getY1(), s.getX2(), s.getY2());
                 if (s.transparent == false) {
                     g2.setColor(s.getFillColor());
@@ -123,11 +127,28 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
                     g2.setColor(s.getFillColor());
                     g2.fillOval(s.getX1(), s.getY1(), s.getX2(), s.getY2());
                 }
+            } else if (s.getShape() == ETools.PENTAGON) {
+                g2.drawPolygon(s.getPointsX(), s.getPointsY(), 5);
+                if (s.transparent == false) {
+                    g2.setColor(s.getFillColor());
+                    g2.fillPolygon(s.getPointsX(), s.getPointsY(), 5);
+                }
+            } else if (s.getShape() == ETools.HEXAGON) {
+                g2.drawPolygon(s.getPointsX(), s.getPointsY(), 6);
+                if (s.transparent == false) {
+                    g2.setColor(s.getFillColor());
+                    g2.fillPolygon(s.getPointsX(), s.getPointsY(), 6);
+                }
+            } else if (s.getShape() == ETools.ARC) {
+                g2.drawArc(s.getRectangle().x, s.getRectangle().y, s.getRectangle().width, s.getRectangle().height,
+                        s.getStartAngle(), s.getDrawAngle());
+                if (s.transparent == false) {
+                    g2.fillArc(s.getRectangle().x, s.getRectangle().y, s.getRectangle().width, s.getRectangle().height,
+                            s.getStartAngle(), s.getDrawAngle());
+                }
             } else if (s.getShape() == ETools.TEXT) {
                 g2.setFont(s.getFont());
                 g2.drawString(s.getMessage(), s.getX1(), s.getY1());
-            } else if (s.getShape() == ETools.PENTAGON) {
-
             }
         }
         if (preview.size() > 0) {
@@ -136,9 +157,7 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
             g2.setStroke(s.getStroke());
             if (s.getShape() == ETools.LINE) {
                 g2.drawLine(s.getX1(), s.getY1(), s.getX2(), s.getY2());
-
             } else if (s.getShape() == ETools.RECTANGLE) {
-
                 g2.drawRect(s.getX1(), s.getY1(), s.getX2(), s.getY2());
                 if (s.transparent == false) {
                     g2.setColor(s.getFillColor());
@@ -150,6 +169,25 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
                     g2.setColor(s.getFillColor());
                     g2.fillOval(s.getX1(), s.getY1(), s.getX2(), s.getY2());
                 }
+            } else if (s.getShape() == ETools.PENTAGON) {
+                g2.drawPolygon(s.getPointsX(), s.getPointsY(), 5);
+                if (s.transparent == false) {
+                    g2.setColor(s.getFillColor());
+                    g2.fillPolygon(s.getPointsX(), s.getPointsY(), 5);
+                }
+            } else if (s.getShape() == ETools.HEXAGON) {
+                g2.drawPolygon(s.getPointsX(), s.getPointsY(), 6);
+                if (s.transparent == false) {
+                    g2.setColor(s.getFillColor());
+                    g2.fillPolygon(s.getPointsX(), s.getPointsY(), 6);
+                }
+            } else if (s.getShape() == ETools.ARC) {
+                g2.drawArc(s.getRectangle().x, s.getRectangle().y, s.getRectangle().width, s.getRectangle().height,
+                        s.getStartAngle(), s.getDrawAngle());
+                if (s.transparent == false) {
+                    g2.fillArc(s.getRectangle().x, s.getRectangle().y, s.getRectangle().width, s.getRectangle().height,
+                            s.getStartAngle(), s.getDrawAngle());
+                }
             }
         }
 
@@ -157,8 +195,8 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
 
     public void setTool(ETools tool) {
         this.activeTool = tool;
-        System.out.println(this.toString());
-        System.out.println(activeTool.toString() + "st");
+        //System.out.println(this.toString());
+        //System.out.println(activeTool.toString() + "st");
     }
 
     public void setImage(BufferedImage image) {
@@ -264,9 +302,34 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
         return currentColor;
     }
 
+    private int calcDistance(Dimension a, Dimension b) {
+        return (int) Math.sqrt((a.width - b.width) * (a.width - b.width)
+                + (a.height - b.height) * (a.height - b.height));
+    }
+
     @Override
     public void mouseClicked(MouseEvent e) {
-
+        if (activeTool == ETools.ARC) {
+            if (drawStatus == ArcStatus.NOT_DRAWING) {
+                center = new Dimension(e.getX(), e.getY());
+                drawStatus = ArcStatus.DEFINED_CENTER;
+            } else if (drawStatus == ArcStatus.DEFINED_CENTER) {
+                startPoint = new Dimension(e.getX(), e.getY());
+                radius = calcDistance(startPoint, center);
+                benchmark = new Vector3(startPoint.width - center.width,
+                        -startPoint.height + center.height, 0);
+                drawStatus = ArcStatus.DEFINED_R;
+                rectangle = new Rectangle(center.width - radius, center.height - radius,
+                        2 * radius, 2 * radius);
+            } else if (drawStatus == ArcStatus.DEFINED_R) {
+                if (preview.size() != 0) {
+                    shapes.push(preview.pop());
+                    preview.clear();
+                }
+                drawStatus = ArcStatus.NOT_DRAWING;
+                direction = ArcStatus.NO_DIRECTION;
+            }
+        }
     }
 
     @Override
@@ -277,24 +340,22 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        if (preview.size() != 0) {
+        if (preview.size() != 0 && activeTool != ETools.ARC) {
             shapes.push(preview.pop());
             preview.clear();
-        }
-        else if (activeTool == ETools.TEXT){
+        } else if (activeTool == ETools.TEXT) {
             int result = textDialog.showCustomDialog(StartUp.mainWindow);
             if (result == TextDialog.APPLY_OPTION) {
                 shapes.push(new Shape(x1, y1, textDialog.getInputSize(), textDialog.getFont(),
                         currentColor, stroke, ETools.TEXT, textDialog.getText()));
             }
-
-
-        }
-        else if (activeTool == ETools.BUCKET) {
+        } else if (activeTool == ETools.BUCKET) {
             floodFill(new Point2D.Double(x1, y1), currentColor);
         }
-        grouped++;
-        dragged = false;
+        if (dragged) {
+            grouped++;
+            dragged = false;
+        }
         repaint();
     }
 
@@ -311,7 +372,7 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        System.out.println(grouped);
+        //System.out.println(grouped);
         StartUp.mainWindow.setMousePosLabel(e.getX(), e.getY());
 
         Color primary = currentColor;
@@ -323,7 +384,7 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
         x2 = e.getX();
         y2 = e.getY();
         this.dragged = true;
-        System.out.println(activeTool.toString());
+        //System.out.println(activeTool.toString());
         if (activeTool == ETools.ERASER) {
             shapes.push(new Shape(x1, y1, x2, y2, Color.white, stroke, ETools.LINE, grouped));
             StartUp.mainWindow.getDrawPanel().repaint();
@@ -359,11 +420,66 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
                 preview.push(new Shape(x2, y2, x1 - x2, y1 - y2, primary, stroke, ETools.ELLIPTICAL, secondary, transparent));
             }
             StartUp.mainWindow.getDrawPanel().repaint();
+        } else if (activeTool == ETools.PENTAGON) {
+            if (x1 < x2 && y1 < y2) {
+                preview.push(new Shape(x1, y1, x2 - x1, y2 - y1, primary, stroke, ETools.PENTAGON, secondary, transparent));
+            } else if (x2 < x1 && y1 < y2) {
+                preview.push(new Shape(x2, y1, x1 - x2, y2 - y1, primary, stroke, ETools.PENTAGON, secondary, transparent));
+            } else if (x1 < x2 && y2 < y1) {
+                preview.push(new Shape(x1, y2, x2 - x1, y1 - y2, primary, stroke, ETools.PENTAGON, secondary, transparent));
+            } else if (x2 < x1 && y2 < y1) {
+                preview.push(new Shape(x2, y2, x1 - x2, y1 - y2, primary, stroke, ETools.PENTAGON, secondary, transparent));
+            }
+            StartUp.mainWindow.getDrawPanel().repaint();
+        } else if (activeTool == ETools.HEXAGON) {
+            if (x1 < x2 && y1 < y2) {
+                preview.push(new Shape(x1, y1, x2 - x1, y2 - y1, primary, stroke, ETools.HEXAGON, secondary, transparent));
+            } else if (x2 < x1 && y1 < y2) {
+                preview.push(new Shape(x2, y1, x1 - x2, y2 - y1, primary, stroke, ETools.HEXAGON, secondary, transparent));
+            } else if (x1 < x2 && y2 < y1) {
+                preview.push(new Shape(x1, y2, x2 - x1, y1 - y2, primary, stroke, ETools.HEXAGON, secondary, transparent));
+            } else if (x2 < x1 && y2 < y1) {
+                preview.push(new Shape(x2, y2, x1 - x2, y1 - y2, primary, stroke, ETools.HEXAGON, secondary, transparent));
+            }
+            StartUp.mainWindow.getDrawPanel().repaint();
         }
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
         StartUp.mainWindow.setMousePosLabel(e.getX(), e.getY());
+
+        if (activeTool == ETools.ARC) {
+            Color primary = currentColor;
+            Color secondary = lastColor;
+            x2 = e.getX();
+            y2 = e.getY();
+            if (drawStatus == ArcStatus.NOT_DRAWING) {
+                return;
+            } else if (drawStatus == ArcStatus.DEFINED_CENTER) {
+                preview.push(new Shape(x1, y1, x2, y2, primary, stroke, ETools.LINE, secondary, transparent));
+                StartUp.mainWindow.getDrawPanel().repaint();
+            } else if (drawStatus == ArcStatus.DEFINED_R) {
+                //System.out.println(direction);
+                if (direction == ArcStatus.NO_DIRECTION) {
+                    Vector3 temp = new Vector3(x2 - center.width, - y2 + center.height, 0);
+                    direction = benchmark.calcDirection(temp);
+                } else if (direction == ArcStatus.LEFT) {
+                    //System.out.println(benchmark.print());
+                    int startAngle = benchmark.normalization().calcAngle(new Vector3(1, 0, 0));
+                    Vector3 temp = new Vector3(x2 - center.width, -y2 + center.height, 0);
+                    int drawAngle = temp.normalization().calcAngle(benchmark.normalization());
+                    //System.out.println(startAngle + " " + drawAngle);
+                    //System.out.println(temp.calcDirection(benchmark));
+                    preview.push(new Shape(rectangle, primary, stroke, ETools.ARC, secondary, transparent, startAngle, drawAngle));
+                } else if (direction == ArcStatus.RIGHT) {
+                    int startAngle = benchmark.normalization().calcAngle(new Vector3(1, 0, 0));
+                    Vector3 temp = new Vector3(x2 - center.width, -y2 + center.height, 0);
+                    int drawAngle = -(360 - temp.normalization().calcAngle(benchmark.normalization()));
+                    preview.push(new Shape(rectangle, primary, stroke, ETools.ARC, secondary, transparent, startAngle, drawAngle));
+                }
+            }
+            StartUp.mainWindow.getDrawPanel().repaint();
+        }
     }
 }

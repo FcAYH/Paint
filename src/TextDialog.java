@@ -7,15 +7,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
@@ -48,64 +40,54 @@ public class TextDialog extends JDialog implements ActionListener, ChangeListene
     Font mainFont;
 
     TextDialog(Frame owner) {
-        super(owner, "Customize Text", true);
+        super(owner, "文本框", true);
         this.setResizable(false);
         //this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
+        setIconImage(new ImageIcon("assets/Logo.png").getImage());
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         String[] fontList = ge.getAvailableFontFamilyNames();
-        String[] fontSize = {"50","52","53","54","55"};
+        String[] fontSize = {"30", "32", "36", "38", "40", "42", "44", "46", "48", "50", "52", "53", "54", "55"};
 
         sizes = new JComboBox(fontSize);
         fonts = new JComboBox(fontList);
 
-        example = new JTextField("Example");
+        example = new JTextField("Hello World!");
         example.setHorizontalAlignment(SwingConstants.CENTER);
-        example.setFont(new Font("sanserif", Font.PLAIN, 28));
+        example.setFont(new Font("Consolas", Font.PLAIN, 28));
         example.setEditable(false);
-        example.setPreferredSize(new Dimension(200,50));
+        example.setPreferredSize(new Dimension(200, 50));
 
-        ok = new JButton("Apply");
-        cancel = new JButton("Cancel");
+        ok = new JButton("确定");
+        cancel = new JButton("取消");
         ok.setPreferredSize(cancel.getPreferredSize());
 
-        input = new JTextField("Example");
-        input.setPreferredSize(new Dimension(200,50));
+        input = new JTextField("Hello World!");
+        input.setPreferredSize(new Dimension(200, 50));
         input.getDocument().addDocumentListener(new DocumentListener() {
 
             @Override
             public void insertUpdate(DocumentEvent e) {
-                // TODO Auto-generated method stub
                 update();
             }
 
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                // TODO Auto-generated method stub
                 update();
             }
 
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                // TODO Auto-generated method stub
                 update();
             }
         });
-        // -------------
-        // add listeners
-        // -------------
 
         ok.addActionListener(this);
         cancel.addActionListener(this);
         input.addActionListener(this);
         fonts.addActionListener(this);
         sizes.addActionListener(this);
-
-        // -----------------
-        // layout components
-        // -----------------
 
         JPanel p0 = new JPanel();
         p0.add(input);
@@ -145,8 +127,6 @@ public class TextDialog extends JDialog implements ActionListener, ChangeListene
         p.add(p4);
         p.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // tweek sizes of panels to make the dialog look nice
-
         Dimension d1 = p3.getPreferredSize();
 
         this.setContentPane(p);
@@ -164,9 +144,6 @@ public class TextDialog extends JDialog implements ActionListener, ChangeListene
     public int getInputSize() {
         return this.inputSize;
     }
-    // -------------------------------
-    // implement ActionListener method
-    // -------------------------------
 
     @Override
     public void actionPerformed(ActionEvent ae) {
@@ -176,12 +153,10 @@ public class TextDialog extends JDialog implements ActionListener, ChangeListene
             userResponse = APPLY_OPTION;
             update();
             this.setVisible(false);
-        }
-
-        else if (source == cancel) {
+        } else if (source == cancel) {
             userResponse = CANCEL_OPTION;
             this.setVisible(false);
-        }else {
+        } else {
             update();
         }
 
@@ -202,25 +177,13 @@ public class TextDialog extends JDialog implements ActionListener, ChangeListene
     public int showCustomDialog(Frame f) {
         this.setLocationRelativeTo(f);
 
-        // set the font combobox to the current font family name
-
-        // currentColor = c;
-
-
-        // show the dialog
-
         this.setVisible(true);
-
-        // When the user closes the dialog by clicking "Apply" or "Cancel",
-        // return a pre-defined integer indicating which button was
-        // pressed.
 
         return userResponse;
     }
 
     @Override
     public void stateChanged(ChangeEvent arg0) {
-        // TODO Auto-generated method stub
         update();
     }
 }
