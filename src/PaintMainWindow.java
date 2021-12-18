@@ -1,4 +1,6 @@
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,21 +28,21 @@ public class PaintMainWindow extends JFrame implements ActionListener {
     private JButton magnifyingBtn;
     private JPanel mainTool;
     private JPanel shapeTools;
-    private JButton button1;
-    private JButton button2;
-    private JButton button3;
-    private JButton button4;
-    private JButton button5;
-    private JButton button6;
-    private JButton button7;
-    private JButton button8;
-    private JButton button9;
-    private JButton button10;
-    private JButton button11;
-    private JButton button12;
-    private JButton button13;
-    private JButton button14;
-    private JButton button15;
+    private JButton blackBtn;
+    private JButton garyBtn;
+    private JButton lightGaryBtn;
+    private JButton darkRedBtn;
+    private JButton pinkBtn;
+    private JButton citrusColorBtn;
+    private JButton redBtn;
+    private JButton waxyYellowBtn;
+    private JButton mistyColorBtn;
+    private JButton orangeBtn;
+    private JButton lightGreenBtn;
+    private JButton blueBtn;
+    private JButton lightYellowBtn;
+    private JButton ultramarineBtn;
+    private JButton lightPurpleBtn;
     private JPanel colorPanel;
     private JButton paletteBtn;
     private JPanel brushPanel;
@@ -55,6 +57,7 @@ public class PaintMainWindow extends JFrame implements ActionListener {
     private JLabel mousePosLabel;
     private JLabel canvasSizeLabel;
     private JPanel drawPanel;
+    private JRadioButton fillBtn;
     private JMenu file, view, edit;
     private JMenuItem openFile, newFile, saveFile;
     private JMenuItem full, half;
@@ -64,6 +67,7 @@ public class PaintMainWindow extends JFrame implements ActionListener {
 
     public PaintMainWindow() {
         super("画图");
+        System.out.println("second");
         setIconImage(new ImageIcon("assets/Logo.png").getImage());
         setSize(1200, 800);
         setLocation(500, 400);
@@ -71,20 +75,9 @@ public class PaintMainWindow extends JFrame implements ActionListener {
         add(paintMainPanel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-
-        drawPanel.setSize(800, 600);
-        Dimension temp = new Dimension(1100, 550);
-        drawPanel.setMaximumSize(temp);
-        drawPanel.setMinimumSize(temp);
-        drawPanel.setBorder(BorderFactory.createLineBorder(Color.lightGray));
-        drawPanel.setBackground(Color.white);
-        setCanvasSizeLabel(1100, 550);
+        Dimension temp = drawPanel.getSize();
+        setCanvasSizeLabel(temp.width, temp.width);
         setMousePosLabel(0, 0);
-        drawPanel.addMouseListener(drawPanelListener);
-        drawPanel.addMouseMotionListener(drawPanelListener);
-        //drawBackPanel.add(drawPanel);
-        drawPanel.requestFocus();
-
         setVisible(true);
         brushesBtn.requestFocus();
     }
@@ -166,9 +159,55 @@ public class PaintMainWindow extends JFrame implements ActionListener {
         selectBtn.setIcon(new ImageIcon("assets/constituency (Icon).png"));
         paletteBtn.setIcon(new ImageIcon("assets/color (Icon).png"));
 
+        fillBtn.addActionListener(this);
+
+        pencilBtn.addActionListener(this);
+        eraserBtn.addActionListener(this);
+        bucketBtn.addActionListener(this);
+        strawBtn.addActionListener(this);
+        textBtn.addActionListener(this);
+        magnifyingBtn.addActionListener(this);
+        brushesBtn.addActionListener(this);
+        lineBtn.addActionListener(this);
+        roundBtn.addActionListener(this);
+        ellipticalBtn.addActionListener(this);
+        hexagonBtn.addActionListener(this);
+        pentagonBtn.addActionListener(this);
+        triangleBtn.addActionListener(this);
+        rectangleBtn.addActionListener(this);
+        selectBtn.addActionListener(this);
         paletteBtn.addActionListener(this);
+
+        blackBtn.addActionListener(this);
+        garyBtn.addActionListener(this);
+        lightGaryBtn.addActionListener(this);
+        darkRedBtn.addActionListener(this);
+        pinkBtn.addActionListener(this);
+        citrusColorBtn.addActionListener(this);
+        redBtn.addActionListener(this);
+        waxyYellowBtn.addActionListener(this);
+        mistyColorBtn.addActionListener(this);
+        orangeBtn.addActionListener(this);
+        lightGreenBtn.addActionListener(this);
+        blueBtn.addActionListener(this);
+        lightYellowBtn.addActionListener(this);
+        ultramarineBtn.addActionListener(this);
+        lightPurpleBtn.addActionListener(this);
+
+        nowColorBtn.addActionListener(this);
+        lastColorBtn.addActionListener(this);
+
+        sizeSpinner.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                StartUp.mainWindow.getDrawPanel().setThickness((int) sizeSpinner.getValue());
+            }
+        });
     }
 
+    public DrawPanelListener getDrawPanel() {
+        return (DrawPanelListener) drawPanel;
+    }
 
     public void setCanvasSizeLabel(int x, int y) {
         canvasSizeLabel.setIcon(new ImageIcon("assets/canvas (Icon).png"));
@@ -186,7 +225,12 @@ public class PaintMainWindow extends JFrame implements ActionListener {
     }
 
     private void showColorChooser() {
-        JColorChooser.showDialog(this, "拾色器", new Color(121, 203, 96));
+        Color newColor = JColorChooser.showDialog(this, "拾色器", new Color(121, 203, 96));
+        if (newColor != null) {
+            setLastColor(((DrawPanelListener) drawPanel).getCurrentColor());
+            StartUp.mainWindow.getDrawPanel().setColor(newColor);
+            setCurrentColor(((DrawPanelListener) drawPanel).getCurrentColor());
+        }
     }
 
     public void createNewDrawPanel() {
@@ -228,7 +272,7 @@ public class PaintMainWindow extends JFrame implements ActionListener {
                                            int newDrawPanelHeight = Integer.parseInt(height.getText());
                                            newFileFrame.dispose();
 
-                                           changeDrawPanelSize(newDrawPanelWidth, newDrawPanelHeight);
+                                           ((DrawPanelListener) drawPanel).changeDrawPanelSize(newDrawPanelWidth, newDrawPanelHeight);
                                        } catch (NumberFormatException nfe) {
                                            JOptionPane.showMessageDialog(null,
                                                    "输入错误，请输入整数",
@@ -272,23 +316,130 @@ public class PaintMainWindow extends JFrame implements ActionListener {
         newFileFrame.add(cancel);
     }
 
-    private void changeDrawPanelSize(int width, int height) {
-        Dimension temp = new Dimension(width, height);
-        drawPanel.setSize(temp);
-        drawPanel.setMaximumSize(temp);
-        drawPanel.setMinimumSize(temp);
-
-        drawPanel.repaint();
-        setCanvasSizeLabel(width, height);
-    }
-
-
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == newFile) {
             System.out.println("dsd");
         } else if (e.getSource() == paletteBtn) {
             showColorChooser();
+        } else if (e.getSource() == pencilBtn) {
+            ((DrawPanelListener) drawPanel).setTool(ETools.PENCIL);
+        } else if (e.getSource() == eraserBtn) {
+            ((DrawPanelListener) drawPanel).setTool(ETools.ERASER);
+        } else if (e.getSource() == bucketBtn) {
+            ((DrawPanelListener) drawPanel).setTool(ETools.BUCKET);
+        } else if (e.getSource() == textBtn) {
+            ((DrawPanelListener) drawPanel).setTool(ETools.TEXT);
+        } else if (e.getSource() == magnifyingBtn) {
+            ((DrawPanelListener) drawPanel).setTool(ETools.MAGNIFYING);
+        } else if (e.getSource() == brushesBtn) {
+            // TODO
+            ((DrawPanelListener) drawPanel).setTool(ETools.PENCIL);
+        } else if (e.getSource() == lineBtn) {
+            ((DrawPanelListener) drawPanel).setTool(ETools.LINE);
+        } else if (e.getSource() == roundBtn) {
+            ((DrawPanelListener) drawPanel).setTool(ETools.ROUND);
+        } else if (e.getSource() == ellipticalBtn) {
+            ((DrawPanelListener) drawPanel).setTool(ETools.ELLIPTICAL);
+        } else if (e.getSource() == hexagonBtn) {
+            ((DrawPanelListener) drawPanel).setTool(ETools.HEXAGON);
+        } else if (e.getSource() == pentagonBtn) {
+            ((DrawPanelListener) drawPanel).setTool(ETools.PENTAGON);
+        } else if (e.getSource() == triangleBtn) {
+            ((DrawPanelListener) drawPanel).setTool(ETools.TRIANGLE);
+        } else if (e.getSource() == rectangleBtn) {
+            ((DrawPanelListener) drawPanel).setTool(ETools.RECTANGLE);
+        } else if (e.getSource() == blackBtn) {
+            setLastColor(((DrawPanelListener) drawPanel).getCurrentColor());
+            ((DrawPanelListener) drawPanel).setColor(SpecialColor.black);
+            setCurrentColor(((DrawPanelListener) drawPanel).getCurrentColor());
+        } else if (e.getSource() == garyBtn) {
+            setLastColor(((DrawPanelListener) drawPanel).getCurrentColor());
+            ((DrawPanelListener) drawPanel).setColor(SpecialColor.gary);
+            setCurrentColor(((DrawPanelListener) drawPanel).getCurrentColor());
+        } else if (e.getSource() == lightGaryBtn) {
+            setLastColor(((DrawPanelListener) drawPanel).getCurrentColor());
+            ((DrawPanelListener) drawPanel).setColor(SpecialColor.lightGary);
+            setCurrentColor(((DrawPanelListener) drawPanel).getCurrentColor());
+        } else if (e.getSource() == darkRedBtn) {
+            setLastColor(((DrawPanelListener) drawPanel).getCurrentColor());
+            ((DrawPanelListener) drawPanel).setColor(SpecialColor.darkRed);
+            setCurrentColor(((DrawPanelListener) drawPanel).getCurrentColor());
+        } else if (e.getSource() == pinkBtn) {
+            setLastColor(((DrawPanelListener) drawPanel).getCurrentColor());
+            ((DrawPanelListener) drawPanel).setColor(SpecialColor.pink);
+            setCurrentColor(((DrawPanelListener) drawPanel).getCurrentColor());
+        } else if (e.getSource() == citrusColorBtn) {
+            setLastColor(((DrawPanelListener) drawPanel).getCurrentColor());
+            ((DrawPanelListener) drawPanel).setColor(SpecialColor.citrusColor);
+            setCurrentColor(((DrawPanelListener) drawPanel).getCurrentColor());
+        } else if (e.getSource() == redBtn) {
+            setLastColor(((DrawPanelListener) drawPanel).getCurrentColor());
+            ((DrawPanelListener) drawPanel).setColor(SpecialColor.red);
+            setCurrentColor(((DrawPanelListener) drawPanel).getCurrentColor());
+        } else if (e.getSource() == redBtn) {
+            setLastColor(((DrawPanelListener) drawPanel).getCurrentColor());
+            ((DrawPanelListener) drawPanel).setColor(SpecialColor.red);
+            setCurrentColor(((DrawPanelListener) drawPanel).getCurrentColor());
+        } else if (e.getSource() == waxyYellowBtn) {
+            setLastColor(((DrawPanelListener) drawPanel).getCurrentColor());
+            ((DrawPanelListener) drawPanel).setColor(SpecialColor.waxyYellow);
+            setCurrentColor(((DrawPanelListener) drawPanel).getCurrentColor());
+        } else if (e.getSource() == mistyColorBtn) {
+            setLastColor(((DrawPanelListener) drawPanel).getCurrentColor());
+            ((DrawPanelListener) drawPanel).setColor(SpecialColor.mistyColor);
+            setCurrentColor(((DrawPanelListener) drawPanel).getCurrentColor());
+        } else if (e.getSource() == orangeBtn) {
+            setLastColor(((DrawPanelListener) drawPanel).getCurrentColor());
+            ((DrawPanelListener) drawPanel).setColor(SpecialColor.orange);
+            setCurrentColor(((DrawPanelListener) drawPanel).getCurrentColor());
+        } else if (e.getSource() == lightGreenBtn) {
+            setLastColor(((DrawPanelListener) drawPanel).getCurrentColor());
+            ((DrawPanelListener) drawPanel).setColor(SpecialColor.lightGreen);
+            setCurrentColor(((DrawPanelListener) drawPanel).getCurrentColor());
+        } else if (e.getSource() == blueBtn) {
+            setLastColor(((DrawPanelListener) drawPanel).getCurrentColor());
+            ((DrawPanelListener) drawPanel).setColor(SpecialColor.blue);
+            setCurrentColor(((DrawPanelListener) drawPanel).getCurrentColor());
+        } else if (e.getSource() == lightYellowBtn) {
+            setLastColor(((DrawPanelListener) drawPanel).getCurrentColor());
+            ((DrawPanelListener) drawPanel).setColor(SpecialColor.lightYellow);
+            setCurrentColor(((DrawPanelListener) drawPanel).getCurrentColor());
+        } else if (e.getSource() == ultramarineBtn) {
+            setLastColor(((DrawPanelListener) drawPanel).getCurrentColor());
+            ((DrawPanelListener) drawPanel).setColor(SpecialColor.ultramarine);
+            setCurrentColor(((DrawPanelListener) drawPanel).getCurrentColor());
+        } else if (e.getSource() == lightPurpleBtn) {
+            setLastColor(((DrawPanelListener) drawPanel).getCurrentColor());
+            ((DrawPanelListener) drawPanel).setColor(SpecialColor.lightPurple);
+            setCurrentColor(((DrawPanelListener) drawPanel).getCurrentColor());
+        } else if (e.getSource() == lastColorBtn) {
+            setLastColor(((DrawPanelListener) drawPanel).getCurrentColor());
+            ((DrawPanelListener) drawPanel).setColor(lastColorBtn.getBackground());
+            setCurrentColor(((DrawPanelListener) drawPanel).getCurrentColor());
+        } else if (e.getSource() == nowColorBtn) {
+            setLastColor(((DrawPanelListener) drawPanel).getCurrentColor());
+            ((DrawPanelListener) drawPanel).setColor(nowColorBtn.getBackground());
+            setCurrentColor(((DrawPanelListener) drawPanel).getCurrentColor());
+        } else if (e.getSource() == fillBtn) {
+            if (fillBtn.isSelected()) {
+                StartUp.mainWindow.getDrawPanel().setTransparency(false);
+            } else {
+                StartUp.mainWindow.getDrawPanel().setTransparency(true);
+            }
         }
+    }
+
+    private void setLastColor(Color lastColor) {
+        lastColorBtn.setBackground(lastColor);
+    }
+
+    private void setCurrentColor(Color currentColor) {
+        nowColorBtn.setBackground(currentColor);
+    }
+
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
+        drawPanel = new DrawPanelListener();
     }
 }

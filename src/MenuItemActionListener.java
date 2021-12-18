@@ -26,7 +26,9 @@ public class MenuItemActionListener implements ActionListener {
         } else if (name.equals("half")) {
 
         } else if (name.equals("quash")) {
+            StartUp.mainWindow.getDrawPanel().quash();
         } else if (name.equals("recover")) {
+            StartUp.mainWindow.getDrawPanel().recover();
         } else {
             return;
         }
