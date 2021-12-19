@@ -139,6 +139,12 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
                     g2.setColor(s.getFillColor());
                     g2.fillPolygon(s.getPointsX(), s.getPointsY(), 6);
                 }
+            } else if (s.getShape() == ETools.TRIANGLE) {
+                g2.drawPolygon(s.getPointsX(), s.getPointsY(), 3);
+                if (s.transparent == false) {
+                    g2.setColor(s.getFillColor());
+                    g2.fillPolygon(s.getPointsX(), s.getPointsY(), 3);
+                }
             } else if (s.getShape() == ETools.ARC) {
                 g2.drawArc(s.getRectangle().x, s.getRectangle().y, s.getRectangle().width, s.getRectangle().height,
                         s.getStartAngle(), s.getDrawAngle());
@@ -180,6 +186,12 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
                 if (s.transparent == false) {
                     g2.setColor(s.getFillColor());
                     g2.fillPolygon(s.getPointsX(), s.getPointsY(), 6);
+                }
+            } else if (s.getShape() == ETools.TRIANGLE) {
+                g2.drawPolygon(s.getPointsX(), s.getPointsY(), 3);
+                if (s.transparent == false) {
+                    g2.setColor(s.getFillColor());
+                    g2.fillPolygon(s.getPointsX(), s.getPointsY(), 3);
                 }
             } else if (s.getShape() == ETools.ARC) {
                 g2.drawArc(s.getRectangle().x, s.getRectangle().y, s.getRectangle().width, s.getRectangle().height,
@@ -329,6 +341,31 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
                 drawStatus = ArcStatus.NOT_DRAWING;
                 direction = ArcStatus.NO_DIRECTION;
             }
+        } else if (activeTool == ETools.STRAW) {
+            try {
+                int x = e.getX(), y = e.getY();
+                x += StartUp.mainWindow.getLocation().x;
+                y += StartUp.mainWindow.getLocation().y;
+                x += StartUp.mainWindow.getDrawBackPanel().getLocation().x;
+                y += StartUp.mainWindow.getDrawBackPanel().getLocation().y;
+                x += getLocation().x;
+                y += getLocation().y;
+                // TODO:暂时不清楚为啥get到的坐标还是和实际坐标差了8, 31，猜测是标题栏的长宽没被算进去
+                x += 8;
+                y += 31;
+                //
+                System.out.println("isHere");
+                Robot robot = new Robot();
+                System.out.println(x + " " + y);
+                Color color = robot.getPixelColor(x, y);
+                System.out.println(color.toString());
+                StartUp.mainWindow.setLastColor(getCurrentColor());
+                setColor(color);
+                StartUp.mainWindow.setCurrentColor(getCurrentColor());
+            } catch (AWTException ex) {
+                ex.printStackTrace();
+            }
+
         }
     }
 
@@ -442,6 +479,17 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
                 preview.push(new Shape(x2, y2, x1 - x2, y1 - y2, primary, stroke, ETools.HEXAGON, secondary, transparent));
             }
             StartUp.mainWindow.getDrawPanel().repaint();
+        } else if (activeTool == ETools.TRIANGLE) {
+            if (x1 < x2 && y1 < y2) {
+                preview.push(new Shape(x1, y1, x2 - x1, y2 - y1, primary, stroke, ETools.TRIANGLE, secondary, transparent));
+            } else if (x2 < x1 && y1 < y2) {
+                preview.push(new Shape(x2, y1, x1 - x2, y2 - y1, primary, stroke, ETools.TRIANGLE, secondary, transparent));
+            } else if (x1 < x2 && y2 < y1) {
+                preview.push(new Shape(x1, y2, x2 - x1, y1 - y2, primary, stroke, ETools.TRIANGLE, secondary, transparent));
+            } else if (x2 < x1 && y2 < y1) {
+                preview.push(new Shape(x2, y2, x1 - x2, y1 - y2, primary, stroke, ETools.TRIANGLE, secondary, transparent));
+            }
+            StartUp.mainWindow.getDrawPanel().repaint();
         }
     }
 
@@ -462,7 +510,7 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
             } else if (drawStatus == ArcStatus.DEFINED_R) {
                 //System.out.println(direction);
                 if (direction == ArcStatus.NO_DIRECTION) {
-                    Vector3 temp = new Vector3(x2 - center.width, - y2 + center.height, 0);
+                    Vector3 temp = new Vector3(x2 - center.width, -y2 + center.height, 0);
                     direction = benchmark.calcDirection(temp);
                 } else if (direction == ArcStatus.LEFT) {
                     //System.out.println(benchmark.print());

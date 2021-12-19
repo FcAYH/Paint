@@ -12,9 +12,11 @@ public class Shape {
     private BasicStroke stroke;
     private String message;
 
+    // 多边形用
     private int[] pointsX;
     private int[] pointsY;
 
+    // 圆弧用
     private Rectangle rectangle;
     private int startAngle;
     private int drawAngle;
@@ -49,6 +51,9 @@ public class Shape {
         }
         if (shape == ETools.HEXAGON) {
             setHexagonPoints();
+        }
+        if (shape == ETools.TRIANGLE) {
+            setTrianglePoints();
         }
     }
 
@@ -165,6 +170,19 @@ public class Shape {
                 y1 + y2,
                 y1 + y2,
                 y1 + (int) (((Math.sqrt(3) - 0.9) / 2) * y2)
+        };
+    }
+
+    private void setTrianglePoints() {
+        pointsX = new int[]{
+                x1 + x2 / 2,
+                x1,
+                x1 + x2
+        };
+        pointsY = new int[]{
+                y1,
+                y1 + y2,
+                y1 + y2
         };
     }
 

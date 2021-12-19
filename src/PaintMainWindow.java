@@ -76,7 +76,7 @@ public class PaintMainWindow extends JFrame implements ActionListener {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         Dimension temp = drawPanel.getSize();
-        setCanvasSizeLabel(temp.width, temp.width);
+        setCanvasSizeLabel(temp.width, temp.height);
         setMousePosLabel(0, 0);
         setVisible(true);
         brushesBtn.requestFocus();
@@ -330,6 +330,8 @@ public class PaintMainWindow extends JFrame implements ActionListener {
             ((DrawPanelListener) drawPanel).setTool(ETools.TEXT);
         } else if (e.getSource() == magnifyingBtn) {
             ((DrawPanelListener) drawPanel).setTool(ETools.MAGNIFYING);
+        } else if (e.getSource() == strawBtn) {
+            ((DrawPanelListener) drawPanel).setTool(ETools.STRAW);
         } else if (e.getSource() == brushesBtn) {
             // TODO
             ((DrawPanelListener) drawPanel).setTool(ETools.PENCIL);
@@ -428,16 +430,20 @@ public class PaintMainWindow extends JFrame implements ActionListener {
         }
     }
 
-    private void setLastColor(Color lastColor) {
+    public void setLastColor(Color lastColor) {
         lastColorBtn.setBackground(lastColor);
     }
 
-    private void setCurrentColor(Color currentColor) {
+    public void setCurrentColor(Color currentColor) {
         nowColorBtn.setBackground(currentColor);
     }
 
     private void createUIComponents() {
         // TODO: place custom component creation code here
         drawPanel = new DrawPanelListener();
+    }
+
+    public JPanel getDrawBackPanel() {
+        return drawBackPanel;
     }
 }
