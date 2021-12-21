@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="paintMainPanel" layout-manager="GridLayoutManager" row-count="4" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="0">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="1478" height="548"/>
+      <xy x="20" y="20" width="1478" height="583"/>
     </constraints>
     <properties>
       <background color="-789517"/>
@@ -700,10 +700,10 @@
           </grid>
         </children>
       </grid>
-      <grid id="e2b44" binding="statusPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="0">
+      <grid id="e2b44" binding="statusPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="0">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="2" fill="0" indent="0" use-parent-layout="true">
+          <grid row="3" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="2" fill="1" indent="0" use-parent-layout="true">
             <minimum-size width="-1" height="20"/>
             <preferred-size width="-1" height="20"/>
             <maximum-size width="-1" height="20"/>
@@ -713,24 +713,25 @@
           <background color="-789517"/>
         </properties>
         <border type="none"/>
-        <children/>
+        <children>
+          <component id="a195e" class="javax.swing.JLabel" binding="mousePosLabel">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Label"/>
+            </properties>
+          </component>
+          <component id="d4cea" class="javax.swing.JLabel" binding="canvasSizeLabel">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Label"/>
+            </properties>
+          </component>
+        </children>
       </grid>
-      <component id="a195e" class="javax.swing.JLabel" binding="mousePosLabel">
-        <constraints>
-          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Label"/>
-        </properties>
-      </component>
-      <component id="d4cea" class="javax.swing.JLabel" binding="canvasSizeLabel">
-        <constraints>
-          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Label"/>
-        </properties>
-      </component>
     </children>
   </grid>
 </form>

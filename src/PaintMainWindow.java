@@ -439,7 +439,6 @@ public class PaintMainWindow extends JFrame implements ActionListener {
     }
 
     private void createUIComponents() {
-        // TODO: place custom component creation code here
         drawPanel = new DrawPanelListener();
     }
 

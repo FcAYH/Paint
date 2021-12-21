@@ -322,6 +322,7 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
     @Override
     public void mouseClicked(MouseEvent e) {
         if (activeTool == ETools.ARC) {
+            System.out.println(drawStatus);
             if (drawStatus == ArcStatus.NOT_DRAWING) {
                 center = new Dimension(e.getX(), e.getY());
                 drawStatus = ArcStatus.DEFINED_CENTER;
@@ -399,6 +400,9 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
     @Override
     public void mouseEntered(MouseEvent e) {
         isInCanvas = true;
+
+        Cursor cursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
+        setCursor(cursor);
     }
 
     @Override
