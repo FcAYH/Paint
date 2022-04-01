@@ -277,18 +277,19 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
     }
 
     public void quash() {
-        if (shapes.size() > 0 && shapes.peek().group == 0) {
-            removed.push(shapes.pop());
+        if (shapes.size() <= 0) {
+            return;
+        }
+
+        Shape lastRemoved = shapes.Pop();
+        removed.push(lastRemoved);
+
+        if (lastRemoved.group == 0) {
             repaint();
-        } else if (shapes.size() > 0 && shapes.peek().group != 0) {
-
-            Shape lastRemoved = shapes.pop();
-            removed.push(lastRemoved);
-
+        } else if (lastRemoved.group != 0) {
             while (shapes.isEmpty() == false && shapes.peek().group == lastRemoved.group) {
                 removed.push(shapes.pop());
                 repaint();
-
             }
         }
     }
@@ -323,9 +324,11 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
     public void mouseClicked(MouseEvent e) {
         if (activeTool == ETools.ARC) {
             System.out.println(drawStatus);
+            // NOT_DRAWING 状态
             if (drawStatus == ArcStatus.NOT_DRAWING) {
                 center = new Dimension(e.getX(), e.getY());
                 drawStatus = ArcStatus.DEFINED_CENTER;
+                // 此时已经确定了圆心，变为DEFINED_CENTER（确定_圆心）状态
             } else if (drawStatus == ArcStatus.DEFINED_CENTER) {
                 startPoint = new Dimension(e.getX(), e.getY());
                 radius = calcDistance(startPoint, center);
@@ -334,6 +337,7 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
                 drawStatus = ArcStatus.DEFINED_R;
                 rectangle = new Rectangle(center.width - radius, center.height - radius,
                         2 * radius, 2 * radius);
+                // 此时已经确定了半径，变为DEFINED_R（确定_半径）状态
             } else if (drawStatus == ArcStatus.DEFINED_R) {
                 if (preview.size() != 0) {
                     shapes.push(preview.pop());
@@ -341,6 +345,7 @@ public class DrawPanelListener extends JPanel implements MouseListener, MouseMot
                 }
                 drawStatus = ArcStatus.NOT_DRAWING;
                 direction = ArcStatus.NO_DIRECTION;
+                // 此时完成了绘图，返回NOT_DRAWING状态
             }
         } else if (activeTool == ETools.STRAW) {
             try {
